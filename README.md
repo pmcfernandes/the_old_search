@@ -1,6 +1,14 @@
 ## The Old Boys!
 The Search Engine for Vintage Computers
 
+### Install
+
+First run composer in root path
+
+    composer install
+
+Next run with apache of PHP embedded server
+
 ### Configuration
 
 DuckDuckGo needs a premium proxies for scraping, because after some request ask for a captcha and can't search anything more. 
