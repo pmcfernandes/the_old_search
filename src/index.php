@@ -1,11 +1,4 @@
-<?php
-
-    require ('../vendor/autoload.php');
-    use foroco\BrowserDetection;
-
-    $useragent = $_SERVER['HTTP_USER_AGENT'];
-?>
-
+<?php require ('./utils.php'); ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -60,14 +53,7 @@
 
     <p>&nbsp;</p>
     <p class="center">
-        <?php
-
-            $browser = new BrowserDetection();
-            $result = $browser->getAll($useragent);
-
-            echo sprintf('You are using %s %s (%s)', $result['browser_name'], $result['browser_version'], $result['os_name']);
-
-        ?>
+        <?php show_browser_info(); ?>
     </p>
     <p class="center"><small>Powered by <a href="https://www.duckduckgo.com" target="_blank">DuckDuckGo</a></small></p>
 </body>

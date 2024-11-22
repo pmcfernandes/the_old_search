@@ -1,5 +1,6 @@
 <?php
     require ('../vendor/autoload.php');
+    require ('./utils.php');
     use Dotenv\Dotenv;
 
     $dotenv = Dotenv::createImmutable(dirname(__DIR__, 1));
@@ -26,7 +27,7 @@
         exit;
     }
 
-    $url = 'https://html.duckduckgo.com/html/?kl=us-en&q=' . $q;
+    $url = 'https://html.duckduckgo.com/html/?kl=us-en&q=' . urlencode($q);
     $ch = curl_init($url);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['vqd'])) {
@@ -87,31 +88,33 @@
             body {
                 background-color: #D7CCB8;
             }
+
+            .page-navi {
+                padding-bottom: 15px;
+                margin-bottom: 15px;
+            }
+
+            .page-navi form {
+                float: left;
+                margin-right: 10px;
+            }
+
+            .page-navi form > input[type=submit] {
+                padding: 5px 15px;
+            }
         </style>
 </head>
 <body>
     <?php include('search_banner.php'); ?>
     <h3>Searched for: <?php echo strip_tags($q); ?></h3>
-    <?php echo $results; ?>
 
-    <?php
-        // process previous and next
+    <div id="results">
+        <?php echo $results; ?>
+    </div>
 
-        $spaner = $finder->query("//*[contains(@class, 'nav-link')]");
+    <div class="page-navi">
+        <?php paginate_results_from_duckduckgo($finder); ?>
+    </div>
 
-        if ($spaner->length > 0) {
-            foreach ($spaner as $form) {
-                $elements = $form->getElementsByTagName("input");
-                echo "<form action='search.php?ui=1' method='POST'>";
-
-                foreach ($elements as $element) {
-                    echo '<input type="' . $element->getAttribute('type') . '" name="' . $element->getAttribute('name') . '" value="' . $element->getAttribute('value') . '" />';
-                }
-
-                echo "</form>";
-            }
-        }
-
-    ?>
 </body>
 </html>

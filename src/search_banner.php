@@ -2,7 +2,7 @@
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $q = $_POST['q'];
     } else {
-        $q = urlencode($_GET['q']);
+        $q = urldecode($_GET['q']);
     }
 ?>
 
