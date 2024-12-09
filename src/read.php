@@ -3,6 +3,7 @@
 
     require_once  ('../vendor/autoload.php');
     require ('./utils.php');
+    require ('./images.php');
 
     use fivefilters\Readability\Readability;
     use fivefilters\Readability\Configuration;
@@ -29,10 +30,15 @@
         'fixRelativeURLs' => true,
     ]));
 
-    if (!$html = file_get_contents($url)) {
-        echo "Failed to read URL: $url";
-        exit;
-    }
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 2);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.2.12) Gecko/20101026 Firefox/3.6.12');
+    $html = curl_exec($ch) ;
+    curl_close($ch);
 
     try {
         $readability->parse($html);
@@ -42,9 +48,9 @@
     }
 
     $readable_article = $readability->getContent();
+    $readable_article = strip_tags($readable_article, '<a><ol><ul><li><br><p><small><font><b><strong><i><em><blockquote><h1><h2><h3><h4><h5><h6>');
     $readable_article = str_replace('strong>', 'b>', $readable_article);
     $readable_article = str_replace('em>', 'i>', $readable_article);
-    $readable_article = strip_tags($readable_article, '<a><ol><ul><li><br><p><small><font><b><strong><i><em><blockquote><h1><h2><h3><h4><h5><h6>');
     $readable_article = str_replace('href="http', 'href="/read.php?' . $banner_query . 'url=http', $readable_article);
 ?>
 
@@ -56,6 +62,7 @@
 	<body>
         <?php
             if ($banner === '1') include ("reader_banner.php");
+            renderImages($readability);
             echo $readable_article;
         ?>
 </body>
